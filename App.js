@@ -12,13 +12,13 @@ const TODO = "@todoapp.todo"
 
 // TODOアイテムのFunctionalComponent
 const TodoItem = (props) => {
-  let textstyle = styles.todoItem
+  let textStyle = styles.todoItem
   if (props.done === true) {
-    textstyle = styles.todoItemDone
+    textStyle = styles.todoItemDone
   }
   return (
-    <TouchableOpacity>
-      <Text style={textstyle}>{props.title}</Text>   
+    <TouchableOpacity onPress={props.onTapTodoItem}>
+      <Text style={textStyle}>{props.title}</Text>   
     </TouchableOpacity>
   )
 }
