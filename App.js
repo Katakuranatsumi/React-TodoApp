@@ -1,5 +1,6 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, Text, ScrollView, FlatList, TextInput, Button, KeyboardAvoidingView, AsyncStorage } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Text, ScrollView,
+   FlatList, TextInput, Button, KeyboardAvoidingView, AsyncStorage, TouchableOpacity, } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 import { gray } from 'ansi-colors';
@@ -8,6 +9,19 @@ import { gray } from 'ansi-colors';
 const STATUSBAR_HEIGHT = Platform.OS == 'ios' ? 20 : StatusBar.currentHeight;
 // TODOを保持するKey/Valueのストアのキーを定義
 const TODO = "@todoapp.todo"
+
+// TODOアイテムのFunctionalComponent
+const TodoItem = (props) => {
+  let textstyle = styles.todoItem
+  if (props.done === true) {
+    textstyle = styles.todoItemDone
+  }
+  return (
+    <TouchableOpacity>
+      <Text style={textstyle}>{props.title}</Text>   
+    </TouchableOpacity>
+  )
+}
 
 export default class App extends React.Component {
 
@@ -19,6 +33,7 @@ export default class App extends React.Component {
     todo: [],
     currentIndex: 0,
     inputText: "",
+    filterText: "",
  }
 }
 　// コンポーネントがマウントされた段階で読み込みを行う
@@ -50,8 +65,7 @@ saveTodo = async (todo) => {
   }
 }
 
-
-　// TODOリストへの追加処理
+// TODOリストへの追加処理
 　onAddItem = () => {
     const title = this.state.inputText
     if (title == "") {
@@ -69,14 +83,41 @@ saveTodo = async (todo) => {
 　 this.saveTodo(todo)
   }
 
+// TODOリストをタップした時の処理
+  onTapTodoItem = (todoItem) => {
+    const todo = this.state.todo
+    const index = todo.indexOf(todoItem)
+    todoItem.done = !todoItem.done
+    todo[index] = todoItem
+    this.setState({todo: todo})
+    this.saveTodo(todo)
+  }
+
   render() {
+      // フィルター処理
+      const filterText = this.state.filterText
+      let todo = this.state.todo
+      if (filterText !== "") {
+        todo = todo.filter(t => t.title.includes(filterText))
+      }
       return (
        <KeyboardAvoidingView style={styles.container} behavior="padding">
-       <View>
-         <Text>Filterがここに配置されます。</Text>
+       <View style={styles.filter}>
+         <TextInput
+         onChangeText={(text) => this.setState({filterText: text})}
+         value={this.state.filterText}
+         style={styles.inputText}
+         placeholder="絞り込み検索"
+         />
          </View>
-         <ScrollView style={styles.todolist}><FlatList data={this.state.todo}
-            renderItem={({item}) => <Text>{item.title}</Text>}
+         <ScrollView style={styles.todolist}><FlatList data={todo}
+            extraData={this.state}
+            renderItem={({item}) => <TodoItem
+            title={item.title}
+            done={item.done}
+            onTapTodoItem={() => this.onTapTodoItem(item)}
+            />
+          }
             keyExtractor={(item, index) => "todo_" + item.index}
             /></ScrollView>
             <View style={styles.input}>
@@ -120,5 +161,14 @@ const styles = StyleSheet.create({
   },
   inputButton: {
    width: 100, 
-  }
+  },
+  // TODO表示用のスタイル
+  todoItem: {
+    fontSize: 20,
+    backgroundColor: "white",
+  },
+  todoItemDone: {
+    fontSize: 20,
+    backgroundColor: "red",
+  },
 });
