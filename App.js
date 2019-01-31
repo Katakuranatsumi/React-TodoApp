@@ -4,9 +4,11 @@ import { Platform, StatusBar, StyleSheet, View, Text, ScrollView,
 import { AppLoading, Asset, Font } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 import { gray } from 'ansi-colors';
-import { SearchBar, Input, Button } from 'react-native-elements'
+import { SearchBar, Input, Button, ListItem } from 'react-native-elements'
 // ボタンのアイコンを Featherから利用する
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/Feather'
+// done IconがあるMaterialIconsを追加
+import Icon2 from 'react-native-vector-icons/MaterialIcons'
 
 // 高さの判断をして値を設定
 const STATUSBAR_HEIGHT = Platform.OS == 'ios' ? 20 : StatusBar.currentHeight;
@@ -15,13 +17,17 @@ const TODO = "@todoapp.todo"
 
 // TODOアイテムのFunctionalComponent
 const TodoItem = (props) => {
-  let textStyle = styles.todoItem
+  let icon = null
   if (props.done === true) {
-    textStyle = styles.todoItemDone
+    icon = <Icon2 name="done" />
   }
   return (
     <TouchableOpacity onPress={props.onTapTodoItem}>
-      <Text style={textStyle}>{props.title}</Text>   
+      <ListItem 
+      title={props.title}
+      rightIcon={icon}
+      bottomDivider
+      />  
     </TouchableOpacity>
   )
 }
