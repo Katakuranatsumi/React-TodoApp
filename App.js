@@ -1,10 +1,12 @@
-import { SearchBar } from 'react-native-elements'
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, Text, ScrollView,
-   FlatList, TextInput, Button, KeyboardAvoidingView, AsyncStorage, TouchableOpacity, } from 'react-native';
-import { AppLoading, Asset, Font, Icon } from 'expo';
+   FlatList, KeyboardAvoidingView, AsyncStorage, TouchableOpacity, } from 'react-native';
+import { AppLoading, Asset, Font } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 import { gray } from 'ansi-colors';
+import { SearchBar, Input, Button } from 'react-native-elements'
+// ボタンのアイコンを Featherから利用する
+import Icon from 'react-native-vector-icons/Feather';
 
 // 高さの判断をして値を設定
 const STATUSBAR_HEIGHT = Platform.OS == 'ios' ? 20 : StatusBar.currentHeight;
@@ -124,16 +126,22 @@ saveTodo = async (todo) => {
             keyExtractor={(item, index) => "todo_" + item.index}
             /></ScrollView>
             <View style={styles.input}>
-            <TextInput
+            <Input
              onChangeText={(text) => this.setState({inputText: text})}
              value={this.state.inputText}
-             style={styles.inputText}
+             containerStyle={styles.inputText}
            />
            <Button 
-             onPress={this.onAddItem}
-             title="Add"
-             color="#841584"
-             style={styles.inputButton}
+            icon={
+              <Icon
+               name='plus'
+               size={30}
+               color='white'
+              />
+            }
+            title=""
+            onPress={this.onAddItem}
+            buttonStyle={styles.inputButton}
            />
            </View>
        </KeyboardAvoidingView>
@@ -155,15 +163,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    height: 30,
+    height: 50,
     flexDirection: 'row', 
+    paddingRight: 10,
   },
   inputText: {
     flex: 1,
     backgroundColor: 'gray',
+    paddingRight: 10,
+    paddingLeft: 10,
   },
   inputButton: {
-   width: 100, 
+   width: 48,
+   height: 48,
+   borderWidth: 0,
+   borderColor: 'transparent',
+   borderRadius: 48,
+   backgroundColor: '#ff6347', 
   },
   // TODO表示用のスタイル
   todoItem: {
