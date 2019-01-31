@@ -1,3 +1,4 @@
+import { SearchBar } from 'react-native-elements'
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, Text, ScrollView,
    FlatList, TextInput, Button, KeyboardAvoidingView, AsyncStorage, TouchableOpacity, } from 'react-native';
@@ -100,16 +101,18 @@ saveTodo = async (todo) => {
       if (filterText !== "") {
         todo = todo.filter(t => t.title.includes(filterText))
       }
+      // SearchBarのplatformを決定
+      const platform = Platform.OS == 'ios' ? 'ios' : 'android'
       return (
        <KeyboardAvoidingView style={styles.container} behavior="padding">
-       <View style={styles.filter}>
-         <TextInput
+        <SearchBar
+         platform={platform}
+         cancelButtonTitle="Cansel"
          onChangeText={(text) => this.setState({filterText: text})}
+         onClear={() => this.setState({filterText: ""})}
          value={this.state.filterText}
-         style={styles.inputText}
-         placeholder="絞り込み検索"
-         />
-         </View>
+         placeholder="Type filter text"
+        />
          <ScrollView style={styles.todolist}><FlatList data={todo}
             extraData={this.state}
             renderItem={({item}) => <TodoItem
